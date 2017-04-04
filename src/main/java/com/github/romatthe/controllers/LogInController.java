@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogInController {
 
     @PostMapping(path = "/login")
-    public void logIn() {
-        
+    public String logIn() {
+        return "ACCESS GRANTED, NUKES LAUNCHED";
     }
 
 }
