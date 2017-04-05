@@ -1,4 +1,4 @@
-package com.github.romatthe;
+package com.github.romatthe.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -9,6 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+// TODO Keep this class?
 
 @Component
 public class UnauthenticatedHandler implements AuthenticationEntryPoint {

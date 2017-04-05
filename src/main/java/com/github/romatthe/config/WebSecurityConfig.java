@@ -1,10 +1,9 @@
-package com.github.romatthe;
+package com.github.romatthe.config;
 
+import com.github.romatthe.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -13,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)  // <--- Enable @PreFilter, @PreAuthorize, @PostFilter, @PostAuthorize beans
+//@EnableGlobalMethodSecurity(prePostEnabled = true)  // <--- Enable @PreFilter, @PreAuthorize, @PostFilter, @PostAuthorize beans
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -31,19 +30,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // Handle any unauthenticated requests as a 401
             .exceptionHandling().authenticationEntryPoint(unauthenticatedHandler)
             .and()
-            // No sessions are needed, we work with a stateless JWT authentication scheme
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)     // No sessions are needed, we work with a stateless JWT authentication scheme
             .and()
-            .authorizeRequests()
-            // Permit unauthorized requests to the Login endpoint
-            .antMatchers("/api/login").permitAll()
-            // Do not permit unauthoried requests to any other API endpoints
-            .antMatchers("api/**").permitAll().anyRequest().authenticated();
-
-        http
-            .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-            // --> Can only insert before or after an already defined filter
-            //     Not sure if this is the right place
+                .authorizeRequests()
+                    .antMatchers("/api/login").permitAll()      // Permit unauthorized requests to the Login endpoint
+            .and()
+                .authorizeRequests()
+                    .antMatchers("/api/**").authenticated()     // Do not permit unauthoried requests to any other API endpoints
+            .and()
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
