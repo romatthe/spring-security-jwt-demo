@@ -1,11 +1,14 @@
 package com.github.romatthe.jwt;
 
+import com.github.romatthe.config.SecuredRequestMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -17,12 +20,13 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessingFilter {
 
-    @Autowired
     private JwtAuthenticationFailureHandler failureHandler;
 
     // TODO Not sure if below means the filter will be applied to ALL routers or only the ones wired up in WebSecurityConfig
-    protected JwtAuthenticationTokenFilter() {
-        super("/api/**");
+    @Autowired
+    protected JwtAuthenticationTokenFilter(JwtAuthenticationFailureHandler handler, SecuredRequestMatcher matcher) {
+        super(matcher);
+        this.failureHandler = handler;
     }
 
     @Override

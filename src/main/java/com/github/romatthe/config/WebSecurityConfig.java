@@ -3,6 +3,7 @@ package com.github.romatthe.config;
 import com.github.romatthe.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)     // No sessions are needed, we work with a stateless JWT authentication scheme
             .and()
                 .authorizeRequests()
-                    .antMatchers("/api/login").permitAll()      // Permit unauthorized requests to the Login endpoint
+                    .antMatchers(HttpMethod.POST,"/api/login").permitAll()      // Permit unauthorized requests to the Login endpoint
             .and()
                 .authorizeRequests()
                     .antMatchers("/api/**").authenticated()     // Do not permit unauthoried requests to any other API endpoints
