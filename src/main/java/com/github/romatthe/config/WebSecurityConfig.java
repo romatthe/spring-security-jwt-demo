@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)  // <--- Enable @PreFilter, @PreAuthorize, @PostFilter, @PostAuthorize beans
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -24,21 +23,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //http.authorizeRequests().antMatchers("/**").hasRole("USER").and().formLogin();
         http
-            // Disable CSRF tokens, as we don't have any cookie sessions
-            .csrf().disable()
-            // Handle any unauthenticated requests as a 401
-            .exceptionHandling().authenticationEntryPoint(unauthenticatedHandler)
+            .csrf().disable()                                                               // Disable CSRF tokens, as we don't have any cookie sessions
+            .exceptionHandling().authenticationEntryPoint(unauthenticatedHandler)           // Handle any unauthenticated requests as a 401
             .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)     // No sessions are needed, we work with a stateless JWT authentication scheme
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)                 // No sessions are needed, we work with a stateless JWT authentication scheme
             .and()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST,"/api/login").permitAll()      // Permit unauthorized requests to the Login endpoint
             .and()
                 .authorizeRequests()
-                    .antMatchers("/api/**").authenticated()     // Do not permit unauthoried requests to any other API endpoints
+                    .antMatchers("/api/**").authenticated()                     // Do not permit unauthoried requests to any other API endpoints
             .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
